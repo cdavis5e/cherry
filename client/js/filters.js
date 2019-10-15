@@ -119,6 +119,12 @@ angular.module('cherry.filters', [])
 			case 'tess-control':		return 'Tessellation Control';
 			case 'tess-evaluation':		return 'Tessellation Evaluation';
 			case 'compute':				return 'Compute';
+			case 'raygen':				return 'Raygen';
+			case 'any-hit':				return 'Any Hit';
+			case 'closest-hit':			return 'Closest Hit';
+			case 'miss':				return 'Miss';
+			case 'intersection':		return 'Intersection';
+			case 'callable':			return 'Callable';
 		}
 	}
 })
