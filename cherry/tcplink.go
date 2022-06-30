@@ -135,7 +135,7 @@ func (link *CommLinkTcpIp) handleConnection (conn net.Conn, eventChannel chan Te
 		msg		Message
 		err		error
 	}
-	receiveQueue := make(chan received, 32)
+	receiveQueue := make(chan received, 8192)
 
 	// Spawn message reader.
 	// \todo [petri] clean way to close this thread .. currently exits with error when socket closed
