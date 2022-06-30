@@ -322,6 +322,9 @@ func (link *CommLinkTcpIp) Start () error {
 		// Sleep for a bit to let process start up properly.
 		// \todo [petri] better way to handle this?
 		time.Sleep(300 * time.Millisecond)
+
+		// Spin up another goroutine to clean up the process when it ends.
+		go cmd.Wait()
 	}
 
 	// Connect to target.

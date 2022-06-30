@@ -9,7 +9,6 @@ Bugs:
 - bug: if selected device config is deleted, execute button stays enabled!
 - bug: 'all results' is not auto-selected in tree
 - bug: crashing test case stops test batch progress
-- bug: execservers are sometimes leaked on Linux (is it always or just on test crash?)
 - bug: unsupported cases (everything GLES3) leaves test cases with status 'running'
 - bug: case result view says "loading" when no log is available (case pending or not executed)
 - bug: long test case names in treeview nastily overlap status code
@@ -115,3 +114,4 @@ Done
 - add Selenium test for launching a test case
 - bind multiple rtdb objects into same scope
 - versioned views to rtdb (needed by test runner when launching tests?)
+- bug: execservers are sometimes leaked on Linux (is it always or just on test crash?)
