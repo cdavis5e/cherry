@@ -346,7 +346,10 @@ func importTestSetHandler (response http.ResponseWriter, request *http.Request) 
 			case "set-name":
 				setName = string(data)
 			case "set-filters":
-				setFilters = string(data)
+				if setFilters != "" {
+					setFilters += "\n"
+				}
+				setFilters += string(data)
 			}
 		}
 		part.Close()
