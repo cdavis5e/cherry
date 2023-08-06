@@ -19,7 +19,7 @@ package rtdb
 import (
 	"bytes"
 	"encoding/gob"
-	_ "../third_party/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 	"database/sql"
 	"fmt"
 	"log"

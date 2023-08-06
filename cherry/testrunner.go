@@ -19,7 +19,7 @@ package cherry
 import (
 	"encoding/xml"
 	"log"
-	"../rtdb"
+	"android.googlesource.com/platform/external/cherry/rtdb"
 	"strings"
 	"time"
 	"fmt"

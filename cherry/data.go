@@ -21,7 +21,7 @@ import (
 	"log"
 	"reflect"
 	"time"
-	"../rtdb"
+	"android.googlesource.com/platform/external/cherry/rtdb"
 )
 
 // CherryObjectSchemaVersion

@@ -22,7 +22,7 @@ import (
 	"bufio"
 	"strings"
 	"errors"
-	"../rtdb"
+	"android.googlesource.com/platform/external/cherry/rtdb"
 	"time"
 	"strconv"
 	"fmt"

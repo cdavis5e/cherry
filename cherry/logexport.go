@@ -19,7 +19,7 @@ package cherry
 import (
 	"errors"
 	"io"
-	"../rtdb"
+	"android.googlesource.com/platform/external/cherry/rtdb"
 )
 
 type BatchResultExportWriter interface {

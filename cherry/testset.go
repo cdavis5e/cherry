@@ -19,7 +19,7 @@ package cherry
 import (
 	"fmt"
 	"regexp"
-	"../rtdb"
+	"android.googlesource.com/platform/external/cherry/rtdb"
 )
 
 func checkTestSetFilters (setFilters []string) error {
