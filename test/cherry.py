@@ -41,18 +41,19 @@ class DeviceConfig:
 		# Find child relevant elements.
 		# \todo [petri] would it be better to wrap these as functions instead of exposing Selenium elements?
 		# \todo [petri] always query Selenium elements on-demand to avoid any potential issues with dynamically loaded/changing data?
-		self.titleBar			= root.find_element_by_id("titleBar")
-		self.expandButton		= root.find_element_by_id("expandButton")
-		self.name				= root.find_element_by_id("name")
-		self.targetAddress		= root.find_element_by_id("targetAddress")
-		self.targetPort			= root.find_element_by_id("targetPort")
-		self.spawnLocalProcess	= root.find_element_by_id("spawnLocalProcess")
-		self.binaryName			= root.find_element_by_id("testBinaryName")
-		self.workingDir			= root.find_element_by_id("testBinaryWorkingDir")
-		self.commandLine		= root.find_element_by_id("testBinaryCommandLine")
-		self.saveButton			= root.find_element_by_id("saveButton")
+		self.titleBar			= root.find_element(By.ID, "titleBar")
+		self.expandButton		= root.find_element(By.ID, "expandButton")
+		self.name				= root.find_element(By.ID, "name")
+		self.targetAddress		= root.find_element(By.ID, "targetAddress")
+		self.targetPort			= root.find_element(By.ID, "targetPort")
+		self.spawnLocalProcess	= root.find_element(By.ID, "spawnLocalProcess")
+		self.binaryName			= root.find_element(By.ID, "testBinaryName")
+		self.workingDir			= root.find_element(By.ID, "testBinaryWorkingDir")
+		self.commandLine		= root.find_element(By.ID, "testBinaryCommandLine")
+		self.envVars			= root.find_element(By.ID, "testBinaryEnvVars")
+		self.saveButton			= root.find_element(By.ID, "saveButton")
 		try: # \note 'new device' doesn't have delete button
-			self.deleteButton	= root.find_element_by_id("deleteButton")
+			self.deleteButton	= root.find_element(By.ID, "deleteButton")
 		except NoSuchElementException:
 			pass
 
@@ -67,10 +68,10 @@ class DeviceConfigList:
 		self.root = root
 
 	def getNewDevice(self):
-		return DeviceConfig(self.root.find_element_by_xpath("//div[@id='newDeviceConfig']"))
+		return DeviceConfig(self.root.find_element(By.XPATH, "//div[@id='newDeviceConfig']"))
 
 	def getDeviceByName(self, name):
-		deviceRoot = self.root.find_element_by_xpath("//b[text() = '%s']/ancestor::div[@id='deviceConfig']" % name)
+		deviceRoot = self.root.find_element(By.XPATH, "//b[text() = '%s']/ancestor::div[@id='deviceConfig']" % name)
 		return DeviceConfig(deviceRoot)
 
 # TestSet
@@ -89,7 +90,7 @@ class TestCaseSelection:
 		self.root = root
 
 		#self.testSetList		= TestSetList(self.root_find_element_by_id())
-		self.extraTestFilters	= self.root.find_element_by_id("testNameFilters")
+		self.extraTestFilters	= self.root.find_element(By.ID, "testNameFilters")
 
 # TestLaunchPage
 
@@ -97,13 +98,13 @@ class TestLaunchPage:
 	def __init__(self, driver):
 		self.driver	= driver
 
-		self.executeButton = driver.find_element_by_id("executeButton")
+		self.executeButton = driver.find_element(By.ID, "executeButton")
 
 	def getDeviceConfigList(self):
-		return DeviceConfigList(self.driver.find_element_by_xpath("//div[@id='deviceConfigList']"))
+		return DeviceConfigList(self.driver.find_element(By.XPATH, "//div[@id='deviceConfigList']"))
 
 	def getTestCaseSelection(self):
-		return TestCaseSelection(self.driver.find_element_by_id("testCaseSelection"))
+		return TestCaseSelection(self.driver.find_element(By.ID, "testCaseSelection"))
 
 	def execute(self):
 		self.executeButton.click()
@@ -113,7 +114,7 @@ class TestLaunchPage:
 class BatchResult:
 	def __init__(self, root):
 		self.root	= root
-		self.name	= root.find_element_by_id("batchResultName").text
+		self.name	= root.find_element(By.ID, "batchResultName").text
 
 	def __str__(self):
 		return self.name
@@ -125,7 +126,7 @@ class BatchResultListPage:
 		self.driver = driver
 
 	def getBatchResults(self):
-		elems = self.driver.find_elements_by_xpath("//a[@id='batchResult']")
+		elems = self.driver.find_elements(By.XPATH, "//a[@id='batchResult']")
 		return [BatchResult(elem) for elem in elems]
 
 # TreeNodeType
@@ -145,9 +146,9 @@ class TestCaseTreeNode:
 	def __init__(self, root, nodeType):
 		self.root		= root
 		self.nodeType	= nodeType
-		self.labelNode	= root.find_element_by_id('nodeLabel')
+		self.labelNode	= root.find_element(By.ID, 'nodeLabel')
 		self.label		= self.labelNode.text
-		self.path		= root.find_element_by_id('nodePath').get_attribute('node-path')
+		self.path		= root.find_element(By.ID, 'nodePath').get_attribute('node-path')
 		assert(self.label != '')
 
 	def select(self):
@@ -161,7 +162,7 @@ class TestCaseTreeNode:
 
 	def toggleExpand(self):
 		assert(self.nodeType == TreeNodeType.Group)
-		treeHead = self.root.find_element_by_css_selector('.tree-branch-head')
+		treeHead = self.root.find_element(By.CSS_SELECTOR, '.tree-branch-head')
 		treeHead.click() # \todo [petri] check that node is currently unexpanded?
 
 	def __str__(self):
@@ -174,13 +175,13 @@ class TestCaseTree:
 		self.root = root
 
 	def getVisibleGroupNodes(self):
-		elems = self.root.find_elements_by_id('testCaseGroupNode')
-		elems = [elem.find_element_by_xpath('(ancestor::li)[last()]') for elem in elems] # get matching <li> node (real root for tree node)
+		elems = self.root.find_elements(By.ID, 'testCaseGroupNode')
+		elems = [elem.find_element(By.XPATH, '(ancestor::li)[last()]') for elem in elems] # get matching <li> node (real root for tree node)
 		return [TestCaseTreeNode(elem, TreeNodeType.Group) for elem in elems]
 
 	def getVisibleLeafNodes(self):
-		elems = self.root.find_elements_by_id('testCaseLeafNode')
-		elems = [elem.find_element_by_xpath('(ancestor::li)[last()]') for elem in elems] # get matching <li> node (real root for tree node)
+		elems = self.root.find_elements(By.ID, 'testCaseLeafNode')
+		elems = [elem.find_element(By.XPATH, '(ancestor::li)[last()]') for elem in elems] # get matching <li> node (real root for tree node)
 		return [TestCaseTreeNode(elem, TreeNodeType.Leaf) for elem in elems]
 
 	def getVisibleNodes(self):
@@ -216,8 +217,8 @@ class DetailsView:
 	def __init__(self, root):
 		self.root = root
 
-		self.title	= root.find_element_by_id('title').text
-		self.status	= root.find_element_by_id('status').text
+		self.title	= root.find_element(By.ID, 'title').text
+		self.status	= root.find_element(By.ID, 'status').text
 
 # BatchResultPage
 
@@ -225,20 +226,20 @@ class BatchResultPage:
 	def __init__(self, driver):
 		self.driver = driver
 
-		self.name	= self.driver.find_element_by_id('batchResultName')
-		self.status	= self.driver.find_element_by_id('batchResultStatus')
+		self.name	= self.driver.find_element(By.ID, 'batchResultName')
+		self.status	= self.driver.find_element(By.ID, 'batchResultStatus')
 
 	def waitUntilFinished(self):
 		WebDriverWait(self.driver, 600).until(EC.invisibility_of_element_located((By.XPATH, "//div[@id='batchResultSpinner']/div")))
 
 	def getStatus(self):
-		return self.driver.find_element_by_id('batchResultStatus').text
+		return self.driver.find_element(By.ID, 'batchResultStatus').text
 
 	def getTestCaseTree(self):
-		return TestCaseTree(self.driver.find_element_by_id('testCaseTree'))
+		return TestCaseTree(self.driver.find_element(By.ID, 'testCaseTree'))
 
 	def getDetailsView(self):
-		return DetailsView(self.driver.find_element_by_id('testCaseContainer'))
+		return DetailsView(self.driver.find_element(By.ID, 'testCaseContainer'))
 
 # Application
 
@@ -246,7 +247,7 @@ class Application:
 	def __init__(self, driver, browser):
 		self.driver		= driver
 		self.browser	= browser
-		#self.spinner	= driver.find_element_by_id("globalSpinner")
+		#self.spinner	= driver.find_element(By.ID, "globalSpinner")
 
 		# \todo [petri] bit of a kludge but didn't really want to pass this all over the place
 		global g_app
@@ -261,11 +262,11 @@ class Application:
 		WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.XPATH, "//div[@id='globalSpinner']/div")))
 
 	def gotoTestLaunchPage(self):
-		self.driver.find_element_by_link_text('Tests').click()
+		self.driver.find_element(By.LINK_TEXT, 'Tests').click()
 		self.waitRPC()
 
 	def gotoBatchResultListPage(self):
-		self.driver.find_element_by_link_text('Results').click()
+		self.driver.find_element(By.LINK_TEXT, 'Results').click()
 		self.waitRPC()
 
 	def gotoBatchResultPage(self, batchResultId):

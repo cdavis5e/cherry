@@ -86,9 +86,9 @@ class BasicTestCase(unittest.TestCase):
 		self.assertIn(BASIC_BATCH_RESULT.name, batchResultNames)
 
 		# \todo [petri] check for something on results page..
-#		print "%d BATCH RESULTS:" % len(batchResults)
+#		print("%d BATCH RESULTS:" % len(batchResults))
 #		for br in batchResults:
-#			print "BR:", br
+#			print("BR:", br)
 
 	def testBatchResultPage(self):
 		# Go to batch result page and do basic checks.
@@ -180,7 +180,7 @@ class BasicTestCase(unittest.TestCase):
 		# \note should we get this automatically from launch execution?
 		batchResultPage = self.app.getBatchResultPage()
 		batchResultPage.waitUntilFinished()
-#		print "BATCH RESULT NAME: '%s'" % batchResultPage.name.text
+#		print("BATCH RESULT NAME: '%s'" % batchResultPage.name.text)
 
 	def tearDown(self):
 		self.driver.quit()
@@ -208,8 +208,8 @@ if __name__ == '__main__':
 	if args.browser not in SUPPORTED_BROWSERS:
 		raise Exception('invalid browser "' + args.browser + '", supported browsers are ' + ', '.join(SUPPORTED_BROWSERS))
 	SELECTED_BROWSER = args.browser
-	print 'Using browser:   %s' % SELECTED_BROWSER
-	print 'ExecServer port: %d' % port
+	print('Using browser:   %s' % SELECTED_BROWSER)
+	print('ExecServer port: %d' % port)
 
 	sys.argv = [sys.argv[0]] + (args.unittest or [])
 
@@ -220,9 +220,13 @@ if __name__ == '__main__':
 
 	# Spawn Cherry server.
 	# \todo [petri] should server be restarted on every test case?
-	server = subprocess.Popen(['../Cherry.exe', '--db=test/'+tmpDBName, '--port=%d' % port], cwd='../', creationflags=DETACHED_PROCESS)
+	if sys.platform == 'Windows':
+		cflags = {'creationflags': DETACHED_PROCESS}
+	else:
+		cflags = {'start_new_session': True}
+	server = subprocess.Popen(['./Cherry.exe', '--db=test/'+tmpDBName, '--port=%d' % port], cwd='../', **cflags)
 	# \todo [petri] wait for server to be booted up properly
-	time.sleep(3) # give Cherry server a bit of time to boot up
+	time.sleep(15) # give Cherry server a bit of time to boot up
 
 	try:
 		if args.xml:
@@ -232,10 +236,10 @@ if __name__ == '__main__':
 			unittest.main(verbosity=2)
 	finally:
 		try:
-			print "Killing child process."
+			print("Killing child process.")
 			subprocess.Popen.kill(server)
 		except Exception as e:
-			print "WARNING: unable to kill process: %s" % e
+			print("WARNING: unable to kill process: %s" % e)
 
 	# Remove tmp database.
 	os.remove(tmpDBName)
