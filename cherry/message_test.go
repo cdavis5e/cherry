@@ -25,7 +25,7 @@ import (
 
 func TestMessages (t *testing.T) {
 	// Write message to buffer.
-	msg := MsgExecuteBinary { "foo.exe", "--single", "c:/", "*" }
+	msg := MsgExecuteBinary { "foo.exe", "--single", "c:/", "*", []string{ "BAR=fred", "BAZ=barney" } }
 	buf := bytes.NewBuffer([]byte{})
 	WriteMessage(buf, &msg)
 
@@ -48,5 +48,14 @@ func TestMessages (t *testing.T) {
 
 	if decoded.CaseList != "*" {
 		t.Errorf("expecting deserialized msg.CaseList to be '%s', got '%s'", msg.CaseList, msg.CaseList)
+	}
+
+	if len(decoded.EnvVars) != len(msg.EnvVars) {
+		t.Errorf("expecting deserialized msg.EnvVars to be length %d, got %d", len(msg.EnvVars), len(msg.EnvVars))
+	}
+	for i, v := range decoded.EnvVars {
+		if (v != msg.EnvVars[i]) {
+			t.Errorf("expecting deserialized msg.EnvVars element %d to be '%s', got '%s'", i, msg.EnvVars[i], v)
+		}
 	}
 }

@@ -92,6 +92,7 @@ type DeviceConfigArgs struct {
 type TestPackageConfigArgs struct {
 	TestBinaryName			string					`json:"testBinaryName"`
 	TestBinaryCommandLine	string					`json:"testBinaryCommandLine"`
+	TestBinaryEnvVars		[]string				`json:"testBinaryEnvVars"`
 	TestBinaryWorkingDir	string					`json:"testBinaryWorkingDir"`
 }
 
@@ -125,6 +126,7 @@ func (handler *RPCHandler) ExecuteTestBatch (client *RPCClient, args ExecuteTest
 
 		TestBinaryName:			args.TestPackageConfig.TestBinaryName,
 		TestBinaryCommandLine:	args.TestPackageConfig.TestBinaryCommandLine,
+		TestBinaryEnvVars:		args.TestPackageConfig.TestBinaryEnvVars,
 		TestBinaryWorkingDir:	args.TestPackageConfig.TestBinaryWorkingDir,
 
 		TestNameFilters:		strings.Split(args.TestNameFilters, ";"),
@@ -188,6 +190,7 @@ func (handler *RPCHandler) ExecuteTestSet (client *RPCClient, args ExecuteTestSe
 
 		TestBinaryName:			args.TestPackageConfig.TestBinaryName,
 		TestBinaryCommandLine:	args.TestPackageConfig.TestBinaryCommandLine,
+		TestBinaryEnvVars:		args.TestPackageConfig.TestBinaryEnvVars,
 		TestBinaryWorkingDir:	args.TestPackageConfig.TestBinaryWorkingDir,
 
 		TestNameFilters:		make([]string, 0),

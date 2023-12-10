@@ -40,6 +40,7 @@ type BatchSessionInfo struct {
 	DeviceId				string		`json:"deviceId"`
 	TestBinaryName			string		`json:"testBinaryName"`
 	TestBinaryCommandLine	string		`json:"testBinaryCommandLine"`
+	TestBinaryEnvVars		[]string	`json:"testBinaryEnvVars"`
 	TestBinaryWorkingDir	string		`json:"testBinaryWorkingDir"`
 
 	CandyTargetName			string		`json:"candyTargetName"`
@@ -68,11 +69,9 @@ func CreateLogContainerParser (resultQueue chan<- TestExecutorEvent) *LogContain
 	}
 }
 
-func split2 (s string, delim string) (string, string) {
-	strs := strings.SplitN(s, delim, 2)
-	last := ""
-	if len(strs) == 2 { last = strs[1] }
-	return strs[0], last
+func split2 (s string, delim string) (first, rest string) {
+	first, rest, _ = strings.Cut(s, delim)
+	return
 }
 
 func parseTimestamp (timestamp string) time.Time {
@@ -109,6 +108,38 @@ func parseIntOrDefault (s string, def int) int {
 	return i
 }
 
+func parseStringSlice (s string) []string {
+	val := []string{}
+	if s[0] != '{' {
+		log.Println("[qpa] warning: slice missing open brace in #sessionInfo line")
+		return val
+	}
+	s = s[1:]
+	for len(s) > 1 {
+		var v string
+		if s[0] == '"' {
+			i := strings.Index(s[1:], `"`)
+			if i == -1 {
+				log.Println("[qpa] warning: missing double quote in #sessionInfo line")
+			} else {
+				var err error
+				v, s = split2(s[i+1:], ",")
+				if v, err = strconv.Unquote(v); err != nil {
+					log.Printf("[qpa] warning: strconv.Unquote() failed: %v\n", err)
+					v = v[1:i]
+				}
+			}
+		} else {
+			v, s = split2(s, ",")
+		}
+		val = append(val, v)
+	}
+	if len(s) == 0 || s[0] != '}' {
+		log.Println("[qpa] warning: slice missing close brace in #sessionInfo line")
+	}
+	return val
+}
+
 func (parser *LogContainerParser) parseSessionInfo (line string) {
 	key, value := split2(line, " ")
 	if value == "" {
@@ -137,6 +168,7 @@ func (parser *LogContainerParser) parseSessionInfo (line string) {
 		case "cherryDeviceId":					parser.sessionInfo.DeviceId					= value
 		case "cherryTestBinaryName":			parser.sessionInfo.TestBinaryName			= value
 		case "cherryTestBinaryCommandLine":		parser.sessionInfo.TestBinaryCommandLine	= value
+		case "cherryTestBinaryEnvVars":			parser.sessionInfo.TestBinaryEnvVars		= parseStringSlice(value)
 		case "cherryTestBinaryWorkingDir":		parser.sessionInfo.TestBinaryWorkingDir		= value
 		default: log.Println("[qpa] warning: unknown #sessionInfo item")
 	}
@@ -296,6 +328,7 @@ func (writer *LogContainerWriter) BeginSession (batch BatchResult, config Device
 		DeviceId:				batch.ExecParams.DeviceId,
 		TestBinaryName:			batch.ExecParams.TestBinaryName,
 		TestBinaryCommandLine:	batch.ExecParams.TestBinaryCommandLine,
+		TestBinaryEnvVars:		batch.ExecParams.TestBinaryEnvVars,
 		TestBinaryWorkingDir:	batch.ExecParams.TestBinaryWorkingDir,
 
 		CandyTargetName:		batch.CandyTargetName,
@@ -369,6 +402,18 @@ func testStatusCodeToString (status TestStatusCode) string {
 	return string(status)[3:]
 }
 
+func mapStringSlice (s []string, f func (string) string) []string {
+	o := make([]string, 0, len(s))
+	for _, v := range s {
+		o = append(o, f(v))
+	}
+	return o
+}
+
+func stringSliceToString (s []string) string {
+	return `{` + strings.Join(mapStringSlice(s, strconv.Quote), ",") + `}`
+}
+
 func (writer *LogContainerWriter) writeSessionInfo (session BatchSessionInfo) {
 	writer.writeSessionInfoLine("adbSerialNumber",				`"` + session.ADBSerialNumber + `"`)
 
@@ -384,6 +429,7 @@ func (writer *LogContainerWriter) writeSessionInfo (session BatchSessionInfo) {
 	writer.writeSessionInfoLine("cherryDeviceId",				`"` + session.DeviceId + `"`)
 	writer.writeSessionInfoLine("cherryTestBinaryName",			`"` + session.TestBinaryName + `"`)
 	writer.writeSessionInfoLine("cherryTestBinaryCommandLine",	`"` + session.TestBinaryCommandLine + `"`)
+	writer.writeSessionInfoLine("cherryTestBinaryEnvVars",		stringSliceToString(session.TestBinaryEnvVars))
 	writer.writeSessionInfoLine("cherryTestBinaryWorkingDir",	`"` + session.TestBinaryWorkingDir + `"`)
 
 	// \note These two are legacy. Only write them if they're nonempty, i.e. this batch

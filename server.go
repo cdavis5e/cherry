@@ -34,6 +34,7 @@ import (
 	"io"
 	"io/ioutil"
 	"strings"
+	_ "runtime"
 )
 
 var rtdbServer	*rtdb.Server

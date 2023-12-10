@@ -127,6 +127,7 @@ class BasicTestCase(unittest.TestCase):
 		deviceBinaryName	= 'Debug/${TestPackageName}.exe'
 		deviceWorkingDir	= '../candy-build/deqp-wgl/modules/${TestPackageDir}'
 		deviceCommandLine	= '--deqp-watchdog=enable --deqp-crashhandler=enable --deqp-visibility=hidden --deqp-gl-config-name=rgba8888d24s8ms0'
+		deviceEnvVars		= 'FOO=bar\nBAZ="quux"'
 
 		# Create & save new config.
 		deviceList = testLaunchPage.getDeviceConfigList()
@@ -141,6 +142,7 @@ class BasicTestCase(unittest.TestCase):
 		device.binaryName.send_keys(deviceBinaryName)
 		device.workingDir.send_keys(deviceWorkingDir)
 		device.commandLine.send_keys(deviceCommandLine)
+		device.envVars.send_keys(deviceEnvVars)
 		device.saveButton.click()
 		self.app.waitRPC() # wait for save to complete..
 
@@ -158,6 +160,7 @@ class BasicTestCase(unittest.TestCase):
 		self.assertEqual(deviceBinaryName, device.binaryName.get_attribute("value"));
 		self.assertEqual(deviceWorkingDir, device.workingDir.get_attribute("value"));
 		self.assertEqual(deviceCommandLine, device.commandLine.get_attribute("value"));
+		self.assertEqual(deviceEnvVars, device.envVars.get_attribute("value"))
 
 	def testExecuteBatch(self):
 		self.app.gotoTestLaunchPage()

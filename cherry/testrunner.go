@@ -366,6 +366,7 @@ func (runner *TestRunner) executeBatch (batchResultId string, batchParams BatchE
 				execParams := CommLinkExecParams {
 					binaryName:		strings.Replace(batchParams.TestBinaryName, "${TestPackageName}", testPackage.binaryName, -1),
 					commandLine:	batchParams.TestBinaryCommandLine,
+					envVars:		batchParams.TestBinaryEnvVars,
 					workingDir:		strings.Replace(batchParams.TestBinaryWorkingDir, "${TestPackageDir}", testPackage.binaryDir, -1),
 					testCasePaths:	encodedCaseList,
 				}

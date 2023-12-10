@@ -88,6 +88,7 @@ angular.module('cherry.testLaunch', [])
 				testBinaryName:			deviceConfig.binaryPath,
 				testBinaryCommandLine:	deviceConfig.commandLine || '',
 				testBinaryWorkingDir:	deviceConfig.workingDir,
+				testBinaryEnvVars:		deviceConfig.envVars || [],
 			};
 			return config;
 		},

@@ -378,6 +378,7 @@ type CommLinkExecParams struct {
 								// For example:
 	binaryName		string		// "Debug/deqp-gles2.exe",
 	commandLine		string		// "--deqp-watchdog=enable --deqp-crashhandler=enable --deqp-visibility=hidden --deqp-gl-config-name=rgba8888d24s8ms0",
+	envVars			[]string	// {"GL_FORCE_COMPILE=ON","MVK_CONFIG_API_VERSION_TO_ADVERTISE=\"1.0\""}
 	workingDir		string		// "../../candy-build/deqp-wgl/modules/gles2",
 	testCasePaths	string		// "{dEQP-GLES2{..}}"
 }
@@ -391,6 +392,7 @@ func (link *CommLinkTcpIp) Execute (params CommLinkExecParams, eventChannel chan
 		Parameters:		params.commandLine,
 		WorkingDir:		params.workingDir,
 		CaseList:		params.testCasePaths,
+		EnvVars:		params.envVars,
 	}
 	link.appendCommLogLine(fmt.Sprintf("Sending command to execute binary '%s' to execserver", params.binaryName))
 	err := WriteMessage(link.socket, &msgExec)

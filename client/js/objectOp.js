@@ -216,6 +216,7 @@ function copyProperties(dst, src)
 
 				if (value.execParams.testBinaryName === '')				{ value.execParams.testBinaryName			= info.testBinaryName; }
 				if (value.execParams.testBinaryCommandLine === '')		{ value.execParams.testBinaryCommandLine	= info.testBinaryCommandLine; }
+				if (value.execParams.testBinaryEnvVars === [])			{ value.execParams.testBinaryEnvVars		= info.testBinaryEnvVars; }
 				if (value.execParams.testBinaryWorkingDir === '')		{ value.execParams.testBinaryWorkingDir		= info.testBinaryWorkingDir; }
 			},
 

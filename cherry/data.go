@@ -85,6 +85,7 @@ type DeviceConfig struct {
 	TargetAddress		string		`json:"targetAddress"`
 	TargetPort			int			`json:"targetPort"`
 	CommandLine			string		`json:"commandLine"`
+	EnvVars				[]string	`json:"envVars"`
 
 	LocalProcessPath	string		`json:"localProcessPath"`
 	BinaryPath			string		`json:"binaryPath"`
@@ -284,6 +285,7 @@ type BatchExecParams struct {
 
 	TestBinaryName			string		`json:"testBinaryName"`
 	TestBinaryCommandLine	string		`json:"testBinaryCommandLine"`
+	TestBinaryEnvVars		[]string	`json:"testBinaryEnvVars"`
 	TestBinaryWorkingDir	string		`json:"testBinaryWorkingDir"`
 
 	// \todo [2017-05-18 kraita]: This field is relevant for 1/3 batch
@@ -397,6 +399,7 @@ func (result *BatchResult) SetSessionInfo (info BatchSessionInfo) error {
 
 	if result.ExecParams.TestBinaryName == ""			{ result.ExecParams.TestBinaryName = info.TestBinaryName }
 	if result.ExecParams.TestBinaryCommandLine == ""	{ result.ExecParams.TestBinaryCommandLine = info.TestBinaryCommandLine }
+	if len(result.ExecParams.TestBinaryEnvVars) == 0	{ result.ExecParams.TestBinaryEnvVars = info.TestBinaryEnvVars }
 	if result.ExecParams.TestBinaryWorkingDir == ""		{ result.ExecParams.TestBinaryWorkingDir = info.TestBinaryWorkingDir }
 
 	return nil
@@ -815,6 +818,7 @@ func InitDB (rtdbServer *rtdb.Server) {
 				TargetAddress:		"127.0.0.1",
 				TargetPort:			50016,
 				CommandLine:		"--deqp-watchdog=enable --deqp-crashhandler=enable --deqp-visibility=hidden --deqp-gl-config-name=rgba8888d24s8ms0",
+				EnvVars:			nil,
 
 				LocalProcessPath:	"../candy-build/deqp-wgl/execserver/Release/execserver.exe",
 				BinaryPath:			"Debug/${TestPackageName}.exe",

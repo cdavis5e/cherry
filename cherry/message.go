@@ -82,12 +82,31 @@ func write (w io.Writer, v interface{}) error {
 	return binary.Write(w, binary.BigEndian, v)
 }
 
+type simpleByteReader struct {
+	io.Reader
+}
+
+func (r simpleByteReader) ReadByte() (b byte, err error) {
+	var buf [1]byte
+	if _, err = r.Read(buf[:]); err == nil {
+		b = buf[0]
+	}
+	return
+}
+
+func makeByteReader(r io.Reader) io.ByteReader {
+	if br, ok := r.(io.ByteReader); ok {
+		return br
+	}
+	return simpleByteReader{r}
+}
+
 func readString (r io.Reader, v *string) error {
 	/* \todo [petri] this is probably horribly slow implementation.. */
 	buf := make([]byte, 0)
+	br := makeByteReader(r)
 	for {
-		var b byte
-		err := read(r, &b)
+		b, err := br.ReadByte()
 		if err != nil { return err }
 		if b == 0 { break }
 		buf = append(buf, b)
@@ -102,6 +121,35 @@ func writeString (w io.Writer, v string) error {
 	var eos byte = 0
 	err = write(w, eos)
 	return err
+}
+
+func readStringSlice (r io.Reader) ([]string, error) {
+	l, err := binary.ReadUvarint(makeByteReader(r))
+	if err != nil {
+		return nil, err
+	}
+	v := make([]string, 0, l)
+	for i := uint64(0); i < l; i++ {
+		var s string
+		if err = readString(r, &s); err != nil {
+			return nil, err
+		}
+		v = append(v, s)
+	}
+	return v, nil
+}
+
+func writeStringSlice (w io.Writer, v []string) error {
+	_, err := w.Write(binary.AppendUvarint(make([]byte, 0, 10), uint64(len(v))))
+	if err != nil {
+		return err
+	}
+	for _, s := range v {
+		if err = writeString(w, s); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // MsgHello
@@ -160,6 +208,7 @@ type MsgExecuteBinary struct {
 	Parameters	string
 	WorkingDir	string
 	CaseList	string
+	EnvVars		[]string
 }
 
 func (msg *MsgExecuteBinary) GetType () MessageType { return MSG_EXECUTE_BINARY }
@@ -169,14 +218,17 @@ func (msg *MsgExecuteBinary) Serialize (w io.Writer) error {
 	if err := writeString(w, msg.Parameters); err != nil { return err }
 	if err := writeString(w, msg.WorkingDir); err != nil { return err }
 	if err := writeString(w, msg.CaseList); err != nil { return err }
+	if err := writeStringSlice(w, msg.EnvVars); err != nil { return err }
 	return nil
 }
 
 func (msg *MsgExecuteBinary) Deserialize (r io.Reader) error {
-	if err := readString(r, &msg.BinaryName); err != nil { return err }
-	if err := readString(r, &msg.Parameters); err != nil { return err }
-	if err := readString(r, &msg.WorkingDir); err != nil { return err }
-	if err := readString(r, &msg.CaseList); err != nil { return err }
+	var err error
+	if err = readString(r, &msg.BinaryName); err != nil { return err }
+	if err = readString(r, &msg.Parameters); err != nil { return err }
+	if err = readString(r, &msg.WorkingDir); err != nil { return err }
+	if err = readString(r, &msg.CaseList); err != nil { return err }
+	if msg.EnvVars, err = readStringSlice(r); err != nil { return err }
 	return nil
 }
 
