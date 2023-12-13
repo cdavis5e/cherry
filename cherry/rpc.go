@@ -395,6 +395,26 @@ func (handler *RPCHandler) GetTestCaseList (client *RPCClient, args struct{}) ([
     return handler.testRunner.fullTestCaseList, nil
 }
 
+// EnumTestCaseList
+
+type EnumTestCaseListArgs struct {
+	Page	int	`json:"page"`
+	Count	int	`json:"count"`
+}
+
+func (handler *RPCHandler) EnumTestCaseList (client *RPCClient, args EnumTestCaseListArgs) ([]string, error) {
+	l := handler.testRunner.fullTestCaseList
+	upper := (args.Page+1) * args.Count;
+	lower := args.Page * args.Count;
+	if upper > len(l) {
+		upper = len(l)
+	}
+	if lower > len(l) {
+		lower = len(l)
+	}
+	return l[lower:upper], nil
+}
+
 // Delete TestSet
 
 func (handler *RPCHandler) DeleteTestSet (client *RPCClient, testSetId string) (bool, error) {

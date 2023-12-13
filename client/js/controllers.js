@@ -58,20 +58,29 @@ angular.module('cherry.controllers', [])
 		uploadStarted:			function() { numActiveUploads++; },
 		uploadFinished:			function() { numActiveUploads--; },
 
+		loadTestCaseTreePage:	function(fullList, page, count) {
+			rpc.call('rtdb.EnumTestCaseList', {page: page, count: count})
+			.then(function(caseList)
+			{
+				if (caseList.length > 0)
+					fullList = fullList.concat(caseList);
+				// If the list we got has less than we asked for, that means we're done.
+				if (caseList.length < count) {
+					$scope.fullTestCaseTree = genTestCaseTree(fullList, 'All Tests');
+					setTestCaseTreeInitialDepthExpansion($scope.fullTestCaseTree, 1);
+				} else {
+					$scope.loadTestCaseTreePage(fullList, page+1, count);
+				}
+			});
+		},
+
 		// \note Full test case tree doesn't change and can be rather big, so
 		//		 we allow child scopes to request loading it to the global scope,
 		//		 and let it remain there.
 		loadFullTestCaseTree:	function()
 		{
 			if ($scope.fullTestCaseTree === undefined)
-			{
-				rpc.call('rtdb.GetTestCaseList', {})
-				.then(function(caseList)
-				{
-					$scope.fullTestCaseTree = genTestCaseTree(caseList, 'All Tests');
-					setTestCaseTreeInitialDepthExpansion($scope.fullTestCaseTree, 1);
-				});
-			}
+				$scope.loadTestCaseTreePage([], 0, 131072);
 		},
 	});
 

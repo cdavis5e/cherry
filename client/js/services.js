@@ -114,6 +114,11 @@ angular.module('cherry.services', [])
 		inMsgQueue.enqueue(args);
 	};
 
+	socket.onerror = function(ev)
+	{
+		console.log('[socket] ERROR: ', ev);
+	}
+
 	return {
 		onmessage: function (callback)
 		{
@@ -189,7 +194,7 @@ angular.module('cherry.services', [])
 	{
 		var requestId = nextRequestId++;
 		var params = Array.prototype.slice.call(arguments, 1)
-		console.log('[rpc] call ' + method + ': ' + debugStr(JSON.stringify(params)));
+		console.log('[rpc] call #' + requestId + ' ' + method + ': ' + debugStr(JSON.stringify(params)));
 		socket.emit({ jsonrpc:"2.0", id:requestId, method:method, params:params });
 
 		// \todo [petri] possible race condition?

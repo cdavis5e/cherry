@@ -94,7 +94,7 @@ func wsHandler (w http.ResponseWriter, r *http.Request) {
 	// RTDB listener callbacks.
 	onSubscribeObject := func(objects []rtdb.Object) {
 		// Send initial object to client.
-		log.Printf("[socket] send %d subscribed object to client\n", len(objects))
+		log.Printf("[socket] send %d subscribed object to client: %v\n", len(objects), objects)
 		encoded, err := EncodeJSONRPC("rtdb.InitObjects", objects)
 		if err != nil { panic(err) }
 		connQueue <- sendMessage{ encoded }
@@ -122,6 +122,8 @@ func wsHandler (w http.ResponseWriter, r *http.Request) {
 		// \todo [petri] what to do on error?!
 		if err == nil {
 			connQueue <- sendMessage{ encoded }
+		} else {
+			log.Printf("[rpc] Request encoding failed: %v\n", err)
 		}
 	}
 
