@@ -644,6 +644,7 @@ func NewTestRunner (rtdbServer *rtdb.Server) *TestRunner {
 		{"dEQP-GLES3",	 "deqp-gles3",			"gles3",								dataDir + "dEQP-GLES3-cases.xml"},
 		{"dEQP-GLES31",	 "deqp-gles31",			"gles31",								dataDir + "dEQP-GLES31-cases.xml"},
 		{"dEQP-VK",		 "deqp-vk",				"../external/vulkancts/modules/vulkan",	dataDir + "dEQP-VK-cases.xml"},
+		{"dEQP-VKSC",	 "deqp-vksc",			"../external/vulkancts/modules/vulkan",	dataDir + "dEQP-VKSC-cases.xml"},
 	}
 
 	packageList := importTestPackages(testPackageDescriptors)
