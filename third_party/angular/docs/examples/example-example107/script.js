@@ -1,6 +1,5 @@
-  function EventController($scope) {
-    $scope.count = 0;
-    $scope.$on('MyEvent', function() {
-      $scope.count++;
-    });
-  }
+  angular.module('logExample', [])
+    .controller('LogController', ['$scope', '$log', function($scope, $log) {
+      $scope.$log = $log;
+      $scope.message = 'Hello World!';
+    }]);

@@ -3,29 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Example - example-example78-jquery</title>
-  <link href="app.css" rel="stylesheet" type="text/css">
   
 
-  <script src="../../components/jquery-1.10.2/jquery.js"></script>
+  <script src="../../components/jquery-2.1.1/jquery.js"></script>
   <script src="../../../angular.js"></script>
-  <script src="app.js"></script>
   
 
   
 </head>
-<body ng-app="scopeInheritance">
-    <div class="spicy">
-    <div ng-controller="MainController">
-      <p>Good {{timeOfDay}}, {{name}}!</p>
-
-      <div ng-controller="ChildController">
-        <p>Good {{timeOfDay}}, {{name}}!</p>
-
-        <div ng-controller="GrandChildController">
-          <p>Good {{timeOfDay}}, {{name}}!</p>
-        </div>
-      </div>
-    </div>
-  </div>
+<body ng-app="">
+   <input ng-copy="copied=true" ng-init="copied=false; value='copy me'" ng-model="value">
+ copied: {{copied}}
 </body>
 </html>

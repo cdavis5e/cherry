@@ -1,3 +1,4 @@
-  it('should calculate expression in binding', function() {
-    expect(element(by.binding('1+2')).getText()).toEqual('1+2=3');
+  it('should load template defined inside script tag', function() {
+    element(by.css('#tpl-link')).click();
+    expect(element(by.css('#tpl-content')).getText()).toMatch(/Content of the template/);
   });

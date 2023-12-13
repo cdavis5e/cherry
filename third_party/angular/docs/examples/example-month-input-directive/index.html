@@ -10,13 +10,14 @@
 
   
 </head>
-<body ng-app="">
+<body ng-app="monthExample">
     <script>
-   function Ctrl($scope) {
-     $scope.value = new Date(2013, 9, 1);
-   }
+   angular.module('monthExample', [])
+     .controller('DateController', ['$scope', function($scope) {
+       $scope.value = new Date(2013, 9, 1);
+     }]);
   </script>
-  <form name="myForm" ng-controller="Ctrl as dateCtrl">
+  <form name="myForm" ng-controller="DateController as dateCtrl">
     Pick a month int 2013:
     <input id="exampleInput" type="month" name="input" ng-model="value"
        placeholder="yyyy-MM" min="2013-01" max="2013-12" required />

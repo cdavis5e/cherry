@@ -5,16 +5,16 @@
   <title>Example - example-example72-jquery</title>
   
 
-  <script src="../../components/jquery-1.10.2/jquery.js"></script>
+  <script src="../../components/jquery-2.1.1/jquery.js"></script>
   <script src="../../../angular.js"></script>
-  <script src="script.js"></script>
   
 
   
 </head>
 <body ng-app="">
-  <div ng-controller="LocationController">
-  <input type="text" ng-model="locationPath" />
-</div>
+   <button ng-mouseleave="count = count + 1" ng-init="count=0">
+   Increment (when mouse leaves)
+ </button>
+ count: {{count}}
 </body>
 </html>

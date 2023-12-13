@@ -208,9 +208,7 @@
 					'</li>' +
 					'</ul>';
 
-				return {
-					template: $compile(template)
-				}
+				this.template = $compile(template)
 			}],
 
 			link: function (scope, element, attrs, treemodelCntr, childTranscludeFn)

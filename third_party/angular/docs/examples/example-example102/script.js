@@ -1,21 +1,15 @@
-  angular.module('form-example2', []).directive('contenteditable', function() {
-    return {
-      require: 'ngModel',
-      link: function(scope, elm, attrs, ctrl) {
-        // view -> model
-        elm.on('blur', function() {
-          scope.$apply(function() {
-            ctrl.$setViewValue(elm.html());
-          });
-        });
-
-        // model -> view
-        ctrl.$render = function() {
-          elm.html(ctrl.$viewValue);
-        };
-
-        // load init value from DOM
-        ctrl.$setViewValue(elm.html());
-      }
-    };
-  });
+  angular.module('orderByExample', [])
+    .controller('ExampleController', ['$scope', '$filter', function($scope, $filter) {
+      var orderBy = $filter('orderBy');
+      $scope.friends = [
+        { name: 'John',    phone: '555-1212',    age: 10 },
+        { name: 'Mary',    phone: '555-9876',    age: 19 },
+        { name: 'Mike',    phone: '555-4321',    age: 21 },
+        { name: 'Adam',    phone: '555-5678',    age: 35 },
+        { name: 'Julie',   phone: '555-8765',    age: 29 }
+      ];
+      $scope.order = function(predicate, reverse) {
+        $scope.friends = orderBy($scope.friends, predicate, reverse);
+      };
+      $scope.order('-age',false);
+    }]);

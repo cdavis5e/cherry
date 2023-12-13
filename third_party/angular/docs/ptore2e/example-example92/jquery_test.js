@@ -1,9 +1,12 @@
-describe("expression", function() {
+describe("", function() {
+  var rootEl;
   beforeEach(function() {
-    browser.get("./examples/example-example92/index-jquery.html");
+    rootEl = browser.rootEl;
+    browser.get("examples/example-example92/index-jquery.html");
   });
-
-  it('should calculate expression in binding', function() {
-    expect(element(by.binding('1+2')).getText()).toEqual('1+2=3');
+  
+  it('should load template defined inside script tag', function() {
+    element(by.css('#tpl-link')).click();
+    expect(element(by.css('#tpl-content')).getText()).toMatch(/Content of the template/);
   });
 });

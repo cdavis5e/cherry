@@ -7,15 +7,15 @@
   
 
   <script src="../../../angular.js"></script>
+  <script src="script.js"></script>
   
 
   
 </head>
-<body ng-app="">
-     <input type="button" value="set" ng-click="myStyle={color:'red'}">
-   <input type="button" value="clear" ng-click="myStyle={}">
-   <br/>
-   <span ng-style="myStyle">Sample Text</span>
-   <pre>myStyle={{myStyle}}</pre>
+<body ng-app="anchorScrollExample">
+    <div id="scrollArea" ng-controller="ScrollController">
+    <a ng-click="gotoBottom()">Go to bottom</a>
+    <a id="bottom"></a> You're at the bottom!
+  </div>
 </body>
 </html>

@@ -11,15 +11,21 @@
 
   
 </head>
-<body ng-app="form-example2">
-    <div contentEditable="true" ng-model="content" title="Click to edit">Some</div>
-  <pre>model = {{content}}</pre>
-
-  <style type="text/css">
-    div[contentEditable] {
-      cursor: pointer;
-      background-color: #D0D0D0;
-    }
-  </style>
+<body ng-app="orderByExample">
+    <div ng-controller="ExampleController">
+    <table class="friend">
+      <tr>
+        <th><a href="" ng-click="reverse=false;order('name', false)">Name</a>
+          (<a href="" ng-click="order('-name',false)">^</a>)</th>
+        <th><a href="" ng-click="reverse=!reverse;order('phone', reverse)">Phone Number</a></th>
+        <th><a href="" ng-click="reverse=!reverse;order('age',reverse)">Age</a></th>
+      </tr>
+      <tr ng-repeat="friend in friends">
+        <td>{{friend.name}}</td>
+        <td>{{friend.phone}}</td>
+        <td>{{friend.age}}</td>
+      </tr>
+    </table>
+  </div>
 </body>
 </html>

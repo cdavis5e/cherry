@@ -6,16 +6,12 @@
   
 
   <script src="../../../angular.js"></script>
-  <script src="script.js"></script>
   
 
   
 </head>
-<body ng-app="docsIsolateScopeDirective">
-    <div ng-controller="Controller">
-    <my-customer info="naomi"></my-customer>
-    <hr>
-    <my-customer info="igor"></my-customer>
-  </div>
+<body ng-app="">
+    <div>Normal: {{1 + 2}}</div>
+  <div ng-non-bindable>Ignored: {{1 + 2}}</div>
 </body>
 </html>

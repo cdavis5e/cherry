@@ -1,7 +1,5 @@
-  function Cntl1($window, $scope){
-    $scope.name = 'World';
-
-    $scope.greet = function() {
-      $window.alert('Hello ' + $scope.name);
-    };
-  }
+  angular.module('documentExample', [])
+    .controller('ExampleController', ['$scope', '$document', function($scope, $document) {
+      $scope.title = $document[0].title;
+      $scope.windowTitle = angular.element(window.document)[0].title;
+    }]);

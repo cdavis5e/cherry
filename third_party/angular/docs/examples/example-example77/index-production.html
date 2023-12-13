@@ -5,18 +5,30 @@
   <title>Example - example-example77-production</title>
   
 
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular.min.js"></script>
-  <script src="app.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.5/angular.min.js"></script>
   
 
   
 </head>
-<body ng-app="spicyApp2">
-  <div ng-controller="SpicyController">
- <input ng-model="customSpice">
- <button ng-click="spicy('chili')">Chili</button>
- <button ng-click="spicy(customSpice)">Custom spice</button>
- <p>The food is {{spice}} spicy!</p>
-</div>
+<body ng-app="submitExample">
+   <script>
+   angular.module('submitExample', [])
+     .controller('ExampleController', ['$scope', function($scope) {
+       $scope.list = [];
+       $scope.text = 'hello';
+       $scope.submit = function() {
+         if ($scope.text) {
+           $scope.list.push(this.text);
+           $scope.text = '';
+         }
+       };
+     }]);
+ </script>
+ <form ng-submit="submit()" ng-controller="ExampleController">
+   Enter text and hit enter:
+   <input type="text" ng-model="text" name="text" />
+   <input type="submit" id="submit" value="Submit" />
+   <pre>list={{list}}</pre>
+ </form>
 </body>
 </html>

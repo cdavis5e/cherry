@@ -3,28 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>Example - example-example47-debug</title>
-  <link href="animations.css" rel="stylesheet" type="text/css">
+  <link href="style.css" rel="stylesheet" type="text/css">
   
 
   <script src="../../../angular.js"></script>
-  <script src="../../../angular-animate.js"></script>
   <script src="script.js"></script>
   
 
   
 </head>
-<body ng-app="ngAnimate">
-    <div ng-controller="Ctrl">
-    <select ng-model="selection" ng-options="item for item in items">
-    </select>
-    <tt>selection={{selection}}</tt>
-    <hr/>
-    <div class="animate-switch-container"
-      ng-switch on="selection">
-        <div class="animate-switch" ng-switch-when="settings">Settings Div</div>
-        <div class="animate-switch" ng-switch-when="home">Home Span</div>
-        <div class="animate-switch" ng-switch-default>default</div>
-    </div>
+<body ng-app="anchorScrollOffsetExample">
+    <div class="fixed-header" ng-controller="headerCtrl">
+    <a href="" ng-click="gotoAnchor(x)" ng-repeat="x in [1,2,3,4,5]">
+      Go to anchor {{x}}
+    </a>
+  </div>
+  <div id="anchor{{x}}" class="anchor" ng-repeat="x in [1,2,3,4,5]">
+    Anchor {{x}} of 5
   </div>
 </body>
 </html>

@@ -11,13 +11,7 @@
   
 </head>
 <body ng-app="">
-    <script>
-    function ExampleController($cookies) {
-      // Retrieving a cookie
-      var favoriteCookie = $cookies.myFavorite;
-      // Setting a cookie
-      $cookies.myFavorite = 'oatmeal';
-    }
-  </script>
+     <div id="template1" ng-cloak>{{ 'hello' }}</div>
+   <div id="template2" ng-cloak class="ng-cloak">{{ 'hello IE7' }}</div>
 </body>
 </html>

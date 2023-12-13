@@ -10,13 +10,14 @@
 
   
 </head>
-<body ng-app="">
+<body ng-app="weekExample">
     <script>
-  function Ctrl($scope) {
-    $scope.value = new Date(2013, 0, 3);
-  }
+  angular.module('weekExample', [])
+    .controller('DateController', ['$scope', function($scope) {
+      $scope.value = new Date(2013, 0, 3);
+    }]);
   </script>
-  <form name="myForm" ng-controller="Ctrl as dateCtrl">
+  <form name="myForm" ng-controller="DateController as dateCtrl">
     Pick a date between in 2013:
     <input id="exampleInput" type="week" name="input" ng-model="value"
         placeholder="YYYY-W##" min="2012-W32" max="2013-W52" required />

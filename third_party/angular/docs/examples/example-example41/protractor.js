@@ -1,4 +1,4 @@
- it('should check ng-non-bindable', function() {
-   expect(element(by.binding('1 + 2')).getText()).toContain('3');
-   expect(element.all(by.css('div')).last().getText()).toMatch(/1 \+ 2/);
- });
+  it('should test service', function() {
+    expect(element(by.id('simple')).element(by.model('message')).getAttribute('value'))
+        .toEqual('test');
+  });

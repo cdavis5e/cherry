@@ -5,26 +5,37 @@
   <title>Example - example-example57-jquery</title>
   
 
-  <script src="../../components/jquery-1.10.2/jquery.js"></script>
+  <script src="../../components/jquery-2.1.1/jquery.js"></script>
   <script src="../../../angular.js"></script>
+  <script src="../../../angular-animate.js"></script>
   
 
-  
-</head>
-<body ng-app="">
-    <script>
-    function Ctrl($scope) {
-      $scope.numbers = [1,2,3,4,5,6,7,8,9];
-      $scope.letters = "abcdefghi";
-      $scope.numLimit = 3;
-      $scope.letterLimit = 3;
-    }
+  <script type="text/javascript">
+    angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
   </script>
-  <div ng-controller="Ctrl">
-    Limit {{numbers}} to: <input type="integer" ng-model="numLimit">
-    <p>Output numbers: {{ numbers | limitTo:numLimit }}</p>
-    Limit {{letters}} to: <input type="integer" ng-model="letterLimit">
-    <p>Output letters: {{ letters | limitTo:letterLimit }}</p>
-  </div>
+</head>
+<body ng-app="inputExample">
+    <script>
+   angular.module('inputExample', [])
+     .controller('ExampleController', ['$scope', function($scope) {
+       $scope.val = '1';
+     }]);
+  </script>
+  <style>
+    .my-input {
+      -webkit-transition:all linear 0.5s;
+      transition:all linear 0.5s;
+      background: transparent;
+    }
+    .my-input.ng-invalid {
+      color:white;
+      background: red;
+    }
+  </style>
+  Update input to see transitions when valid/invalid.
+  Integer is a valid value.
+  <form name="testForm" ng-controller="ExampleController">
+    <input ng-model="val" ng-pattern="/^\d+$/" name="anim" class="my-input" />
+  </form>
 </body>
 </html>

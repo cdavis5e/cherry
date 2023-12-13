@@ -5,23 +5,17 @@
   <title>Example - example-example54-jquery</title>
   
 
-  <script src="../../components/jquery-1.10.2/jquery.js"></script>
+  <script src="../../components/jquery-2.1.1/jquery.js"></script>
   <script src="../../../angular.js"></script>
   
 
   
 </head>
 <body ng-app="">
-    <script>
-    function Ctrl($scope) {
-      $scope.val = 1234.56789;
-    }
-  </script>
-  <div ng-controller="Ctrl">
-    Enter number: <input ng-model='val'><br>
-    Default formatting: <span id='number-default'>{{val | number}}</span><br>
-    No fractions: <span>{{val | number:0}}</span><br>
-    Negative number: <span>{{-val | number:4}}</span>
-  </div>
+    Check me to select: <input type="checkbox" ng-model="selected"><br/>
+  <select>
+    <option>Hello!</option>
+    <option id="greet" ng-selected="selected">Greetings!</option>
+  </select>
 </body>
 </html>
