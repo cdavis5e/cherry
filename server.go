@@ -69,11 +69,8 @@ func debugStr (s string) string {
 
 func wsHandler (w http.ResponseWriter, r *http.Request) {
 	conn, err := websocket.Upgrade(w, r, nil, 1024, 1024)
-	if _, ok := err.(websocket.HandshakeError); ok {
-		http.Error(w, "Not a websocket handshake", 400)
-		return
-	} else if err != nil {
-		log.Println(err)
+	if err != nil {
+		log.Printf("[socket] connection failed: %v\n", err)
 		return
 	}
 	log.Println("[socket] connection established")
@@ -193,15 +190,15 @@ func wsHandler (w http.ResponseWriter, r *http.Request) {
 
 // Helper for handling GET requests of the form /uriDirectoryName/param .
 func handleSingleParamGETRequest (response http.ResponseWriter, request *http.Request, uriDirectoryName string, writeResponse func(param string) error) {
-	if request.Method != "GET" {
-		http.Error(response, "Invalid request", 400)
+	if request.Method != http.MethodGet {
+		http.Error(response, "Only GET is supported", http.StatusMethodNotAllowed)
 		return
 	}
 
 	uri, err := url.ParseRequestURI(request.RequestURI)
 	if err != nil {
 		log.Printf("[getrequest] Error when parsing URI: %v\n", err)
-		http.Error(response, err.Error(), 404)
+		http.Error(response, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -211,7 +208,7 @@ func handleSingleParamGETRequest (response http.ResponseWriter, request *http.Re
 	err = writeResponse(param)
 	if err != nil {
 		log.Printf("[getrequest] Finished with error: %v\n", err)
-		http.Error(response, err.Error(), 404)
+		http.Error(response, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	log.Printf("[getrequest] Finished successfully\n")
@@ -250,14 +247,19 @@ func exportHandler (response http.ResponseWriter, request *http.Request) {
 
 // QPA import request handler.
 func importHandler (response http.ResponseWriter, request *http.Request) {
-	if request.Method != "POST" || request.RequestURI != "/import/" {
-		http.Error(response, "Invalid request", 400)
+	if request.Method != http.MethodPost {
+		http.Error(response, "Only POST is supported", http.StatusMethodNotAllowed)
+		return
+	}
+	if request.RequestURI != "/import/" {
+		http.Error(response, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
 	parts, err := request.MultipartReader()
 	if err != nil {
-		http.Error(response, "Expected a multipart upload", 400)
+		response.Header().Set("Accept", "multipart/mixed, multipart/parallel")
+		http.Error(response, "Expected a multipart upload", http.StatusUnsupportedMediaType)
 		return
 	}
 
@@ -293,10 +295,10 @@ func importHandler (response http.ResponseWriter, request *http.Request) {
 		response.WriteHeader(http.StatusOK)
 	} else if !anyImportSucceeded {
 		// no successes
-		http.Error(response, "Import failed", 500)
+		http.Error(response, "Import failed", http.StatusInternalServerError)
 	} else {
 		// both failures and successes
-		http.Error(response, "Partial failure", 207)
+		http.Error(response, "Partial failure", http.StatusMultiStatus)
 	}
 }
 
@@ -316,14 +318,19 @@ func splitAndTrimTestSetFilters (setFilters string) []string {
 }
 
 func importTestSetHandler (response http.ResponseWriter, request *http.Request) {
-	if request.Method != "POST" || request.RequestURI != "/importTestSet/" {
-		http.Error(response, "Invalid request", 400)
+	if request.Method != http.MethodPost {
+		http.Error(response, "Only POST is supported", http.StatusMethodNotAllowed)
+		return
+	}
+	if request.RequestURI != "/importTestSet/" {
+		http.Error(response, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
 	parts, err := request.MultipartReader()
 	if err != nil {
-		http.Error(response, "Expected a multipart upload", 400)
+		response.Header().Set("Accept", "multipart/mixed, multipart/parallel")
+		http.Error(response, "Expected a multipart upload", http.StatusUnsupportedMediaType)
 		return
 	}
 
@@ -365,14 +372,14 @@ func importTestSetHandler (response http.ResponseWriter, request *http.Request) 
 		err = cherry.AddTestSet(rtdbServer, setName, filterList)
 		if err != nil {
 			log.Printf("[test set import] Import failed with error %v\n", err)
-			http.Error(response, "Import failed", 500)
+			http.Error(response, "Import failed", http.StatusInternalServerError)
 		} else {
 			log.Printf("[test set import] Imported test set %s with %d filters\n", setName, len(filterList))
 			response.WriteHeader(http.StatusOK)
 		}
 	} else {
 		log.Printf("[test set import] Tried to import empty filter set or empty set name or other failure.\n")
-		http.Error(response, "Import failed", 500)
+		http.Error(response, "Import failed", http.StatusInternalServerError)
 	}
 }
 

@@ -98,16 +98,20 @@ func (u *Upgrader) selectSubprotocol(r *http.Request, responseHeader http.Header
 // request. Use the responseHeader to specify cookies (Set-Cookie) and the
 // application negotiated subprotocol (Sec-Websocket-Protocol).
 func (u *Upgrader) Upgrade(w http.ResponseWriter, r *http.Request, responseHeader http.Header) (*Conn, error) {
-	if values := r.Header["Sec-Websocket-Version"]; len(values) == 0 || values[0] != "13" {
-		return u.returnError(w, r, http.StatusBadRequest, "websocket: version != 13")
-	}
-
 	if !tokenListContainsValue(r.Header, "Connection", "upgrade") {
-		return u.returnError(w, r, http.StatusBadRequest, "websocket: connection header != upgrade")
+		w.Header().Set("Connection", "upgrade")
+		w.Header().Set("Upgrade", "websocket")
+		return u.returnError(w, r, http.StatusUpgradeRequired, "websocket: connection header != upgrade")
 	}
 
 	if !tokenListContainsValue(r.Header, "Upgrade", "websocket") {
-		return u.returnError(w, r, http.StatusBadRequest, "websocket: upgrade != websocket")
+		w.Header().Set("Connection", "upgrade")
+		w.Header().Set("Upgrade", "websocket")
+		return u.returnError(w, r, http.StatusUpgradeRequired, "websocket: upgrade != websocket")
+	}
+
+	if values := r.Header["Sec-Websocket-Version"]; len(values) == 0 || values[0] != "13" {
+		return u.returnError(w, r, http.StatusBadRequest, "websocket: version != 13")
 	}
 
 	checkOrigin := u.CheckOrigin

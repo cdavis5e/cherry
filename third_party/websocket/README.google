@@ -7,3 +7,5 @@ Description:
 Websocket library for Go Language
 
 Local Modifications:
+Changed to return StatusUpgradeRequired when the HTTP request lacks the upgrade
+headers.
