@@ -401,6 +401,11 @@ func setUpFileMappings() {
 		http.ServeFile(w, r, "LICENSE")
 	})
 
+	// Special case the Favorites icon
+	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "client/img/favicon.ico")
+	})
+
 	// The client hierarchy served as-is
 	fs := http.Dir("client")
 	fileHandler := http.FileServer(fs)
