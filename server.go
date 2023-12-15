@@ -267,6 +267,8 @@ func importHandler (response http.ResponseWriter, request *http.Request) {
 
 	anyImportSucceeded := false
 	anyImportFailed := false
+	statuses := []int{}
+	errs := []error{}
 
 	for {
 		file, err := parts.NextPart();
@@ -280,9 +282,13 @@ func importHandler (response http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			log.Printf("[import] Import failed with error %v\n", err)
 			anyImportFailed = true
+			statuses = append(statuses, http.StatusInternalServerError)
+			errs = append(errs, err)
 		} else {
 			log.Printf("[import] Single import finished\n")
 			anyImportSucceeded = true
+			statuses = append(statuses, http.StatusOK)
+			errs = append(errs, nil)
 		}
 
 		file.Close()
@@ -298,7 +304,18 @@ func importHandler (response http.ResponseWriter, request *http.Request) {
 		http.Error(response, "Import failed", http.StatusInternalServerError)
 	} else {
 		// both failures and successes
-		http.Error(response, "Partial failure", http.StatusMultiStatus)
+		xml := "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<multistatus xmlns=\"DAV:\">\n"
+		for i, s := range statuses {
+			xml += "  <response>\n"
+			xml += "    <status>HTTP/1.1 " + strconv.Itoa(s) + http.StatusText(s) + "</status>\n"
+			if errs[i] != nil {
+				xml += "    <responsedescription>" + errs[i].Error() + "</responsedescription>\n"
+			}
+			xml += "  </response>\n"
+		}
+		xml += "</multistatus>"
+		response.Header().Set("Content-Type", "text/xml")
+		http.Error(response, xml, http.StatusMultiStatus)
 	}
 }
 
